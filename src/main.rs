@@ -58,7 +58,7 @@ impl Default for Game {
 fn main() {
     let (mut rl, rt) = raylib::init()
         .size(800, 600)
-        .title("snaker | kfjustis | v0.1.0")
+        .title("snaker | kfjustis | v0.2.0")
         .build();
     
     let mut game = Game::default();
@@ -126,13 +126,25 @@ fn update_game(game: &mut Game, rl: &RaylibHandle) {
     else
     {
         let mut tail = game.player_parts.pop_back().unwrap();
-        let head = game.player_parts.front();
+        let head = game.player_parts.front().unwrap();
 
         match game.last_dir {
-            PlayerDir::UP => tail.position.y -= head.unwrap().size,
-            PlayerDir::DOWN => tail.position.y += head.unwrap().size,
-            PlayerDir::LEFT => tail.position.x -= head.unwrap().size,
-            PlayerDir::RIGHT => tail.position.x += head.unwrap().size,
+            PlayerDir::UP => {
+                tail.position.x = head.position.x;
+                tail.position.y = head.position.y - head.size
+            },
+            PlayerDir::DOWN => {
+                tail.position.x = head.position.x;
+                tail.position.y = head.position.y + head.size;
+            },
+            PlayerDir::LEFT => {
+                tail.position.x = head.position.x - head.size;
+                tail.position.y = head.position.y;
+            },
+            PlayerDir::RIGHT => {
+                tail.position.x = head.position.x + head.size;
+                tail.position.y = head.position.y;
+            },
         }
 
         game.player_parts.push_front(tail);
