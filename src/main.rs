@@ -58,13 +58,13 @@ impl Default for Game {
 fn main() {
     let (mut rl, rt) = raylib::init()
         .size(800, 600)
-        .title("snaker | kfjustis | v0.2.0")
+        .title("snaker | kfjustis | v0.2.1")
         .build();
     
     let mut game = Game::default();
 
     // Set the target frame rate.
-    rl.set_target_fps(3);
+    rl.set_target_fps(60);
 
     // Set a different exit key.
     rl.set_exit_key(Some(
@@ -74,9 +74,15 @@ fn main() {
     init_game(&mut game, &rl);
     
     // Run the game loop.
-    while !rl.window_should_close() {  
-        update_game(&mut game, &rl);
-        draw_game(&game, &mut rl, &rt);
+    let mut start_time = rl.get_time();
+    const DELTA_THRESHOLD: f64 = 0.1;
+    while !rl.window_should_close() {
+        let dt = rl.get_time() - start_time;
+        if dt > DELTA_THRESHOLD {
+            update_game(&mut game, &rl);
+            draw_game(&game, &mut rl, &rt);
+            start_time = rl.get_time();
+        }
     }
 }
 
@@ -115,7 +121,6 @@ fn update_game(game: &mut Game, rl: &RaylibHandle) {
     // Update player position based on the key.
     if game.player_parts.len() == 1 {
         let mut head = &mut game.player_parts[0];
-        println!("moved player {:?}", head.position);
         match game.last_dir {
             PlayerDir::UP => head.position.y -= head.size,
             PlayerDir::DOWN => head.position.y += head.size,
