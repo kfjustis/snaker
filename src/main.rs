@@ -75,7 +75,7 @@ fn main() {
     
     // Run the game loop.
     let mut start_time = rl.get_time();
-    const DELTA_THRESHOLD: f64 = 0.1;
+    const DELTA_THRESHOLD: f64 = 1.0/15.0; // frame time, controls speed
     while !rl.window_should_close() {
         let dt = rl.get_time() - start_time;
         if dt > DELTA_THRESHOLD {
@@ -161,8 +161,8 @@ fn update_game(game: &mut Game, rl: &RaylibHandle) {
        (game.player_parts[0].position.y > game.food.position.y - game.food.size &&
         game.player_parts[0].position.y < game.food.position.y + game.food.size) {
             // Get random x and y, then set it to new food position.
-            let rand_x = get_random_value(0, rl.get_screen_width());
-            let rand_y = get_random_value(0, rl.get_screen_height());
+            let rand_x:i32 = get_random_value(0, rl.get_screen_width());
+            let rand_y:i32 = get_random_value(0, rl.get_screen_height());
             game.food.position = Vector2::new (rand_x as f32, rand_y as f32);
 
             // Add a new part to the head of the snake.
